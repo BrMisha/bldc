@@ -31,7 +31,7 @@
 #define READ_SCL()				palReadPad(s->scl_gpio, s->scl_pin)
 
 // Private functions
-static void i2c_start_cond(i2c_bb_state *s);
+/*static void i2c_start_cond(i2c_bb_state *s);
 static void i2c_stop_cond(i2c_bb_state *s);
 static void i2c_write_bit(i2c_bb_state *s, bool bit);
 static bool i2c_read_bit(i2c_bb_state *s);
@@ -49,18 +49,20 @@ static inline float rate2secs(i2c_bb_state *s) {
 	}
 
 	return 1.0e-6;
-}
+}*/
 
 void i2c_bb_init(i2c_bb_state *s) {
-	chMtxObjectInit(&s->mutex);
+	/*chMtxObjectInit(&s->mutex);
 	palSetPadMode(s->sda_gpio, s->sda_pin, PAL_MODE_OUTPUT_OPENDRAIN);
 	palSetPadMode(s->scl_gpio, s->scl_pin, PAL_MODE_OUTPUT_OPENDRAIN);
 	s->has_started = false;
-	s->has_error = false;
+	s->has_error = false;*/
+	
+	hw_start_i2c();
 }
 
 void i2c_bb_restore_bus(i2c_bb_state *s) {
-	chMtxLock(&s->mutex);
+	/*chMtxLock(&s->mutex);
 
 	SCL_HIGH();
 	SDA_HIGH();
@@ -81,11 +83,13 @@ void i2c_bb_restore_bus(i2c_bb_state *s) {
 
 	s->has_error = false;
 
-	chMtxUnlock(&s->mutex);
+	chMtxUnlock(&s->mutex);*/
+	
+	hw_try_restore_i2c();
 }
 
 bool i2c_bb_tx_rx(i2c_bb_state *s, uint16_t addr, uint8_t *txbuf, size_t txbytes, uint8_t *rxbuf, size_t rxbytes) {
-	chMtxLock(&s->mutex);
+/*	chMtxLock(&s->mutex);
 
 	i2c_write_byte(s, true, false, addr << 1);
 
@@ -106,8 +110,16 @@ bool i2c_bb_tx_rx(i2c_bb_state *s, uint16_t addr, uint8_t *txbuf, size_t txbytes
 	chMtxUnlock(&s->mutex);
 
 	return !s->has_error;
+*/
+	
+	i2cAcquireBus(&HW_I2C_DEV);
+	systime_t tmo = MS2ST(1);
+	msg_t status = i2cMasterTransmitTimeout(&HW_I2C_DEV, addr, txbuf, txbytes, rxbuf, rxbytes, tmo);
+	i2cReleaseBus(&HW_I2C_DEV);
+	
+	status == MSG_OK;
 }
-
+/*
 static void i2c_start_cond(i2c_bb_state *s) {
 	if (s->has_started) {
 		// if started, do a restart condition
@@ -275,4 +287,4 @@ static bool clock_stretch_timeout(i2c_bb_state *s) {
 
 static void i2c_delay(float seconds) {
 	timer_sleep(seconds);
-}
+}*/
