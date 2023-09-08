@@ -190,7 +190,7 @@
 #define HW_I2C_SDA_PORT			GPIOB
 #define HW_I2C_SDA_PIN			11
 
-//#define I2C_BB_USE_HW
+#define I2C_BB_USE_HW
 
 // Hall/encoder pins
 #define HW_HALL_ENC_GPIO1		GPIOC

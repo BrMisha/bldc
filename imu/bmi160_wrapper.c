@@ -19,6 +19,7 @@
 
 #include "bmi160_wrapper.h"
 #include "utils_math.h"
+#include "commands.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -129,7 +130,23 @@ static THD_FUNCTION(bmi_thread, arg) {
 	for(;;) {
 		struct bmi160_sensor_data accel;
 		struct bmi160_sensor_data gyro;
-
+		
+// some bags
+#ifdef I2C_BB_USE_HW
+		int8_t res = bmi160_get_sensor_data((BMI160_ACCEL_SEL),
+				&accel, &gyro, &(s->sensor));
+		if (res != BMI160_OK) {
+			chThdSleepMilliseconds(5);
+			continue;
+		}
+		
+		res = bmi160_get_sensor_data((BMI160_GYRO_SEL),
+				&accel, &gyro, &(s->sensor));		
+		if (res != BMI160_OK) {
+			chThdSleepMilliseconds(5);
+			continue;
+		}
+#else		
 		int8_t res = bmi160_get_sensor_data((BMI160_ACCEL_SEL | BMI160_GYRO_SEL),
 				&accel, &gyro, &(s->sensor));
 
@@ -137,6 +154,7 @@ static THD_FUNCTION(bmi_thread, arg) {
 			chThdSleepMilliseconds(5);
 			continue;
 		}
+#endif
 
 		float tmp_accel[3], tmp_gyro[3], tmp_mag[3];
 
@@ -150,7 +168,7 @@ static THD_FUNCTION(bmi_thread, arg) {
 
 		memset(tmp_mag, 0, sizeof(tmp_mag));
 
-		if (s->read_callback) {
+		if (s->read_callback) {//commands_printf("bmi %f %f %f,	%f %f %f,	%f %f %f", tmp_accel[0], tmp_accel[1], tmp_accel[2], tmp_gyro[0], tmp_gyro[1], tmp_gyro[2], tmp_mag[0], tmp_mag[1], tmp_mag[2]);
 			s->read_callback(tmp_accel, tmp_gyro, tmp_mag);
 		}
 
