@@ -125,10 +125,11 @@ void app_set_configuration(app_configuration *conf) {
 
 		case APP_BALANCE:
 			app_balance_start();
-			if(appconf.imu_conf.type == IMU_TYPE_INTERNAL){
-				hw_stop_i2c();
+			// TODO:L
+			//if(appconf.imu_conf.type == IMU_TYPE_INTERNAL){
+				//hw_stop_i2c();
 				app_uartcomm_start(UART_PORT_COMM_HEADER);
-			}
+			//}
 			break;
 
 		case APP_PAS:
