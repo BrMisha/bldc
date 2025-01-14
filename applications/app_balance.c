@@ -86,8 +86,8 @@ static float torquetilt_on_step_size, torquetilt_off_step_size, turntilt_step_si
 static float tiltback_variable, tiltback_variable_max_erpm, noseangling_step_size;
 
 // Runtime values read from elsewhere
-static float pitch_angle, last_pitch_angle, roll_angle, abs_roll_angle, abs_roll_angle_sin, last_gyro_y;
-static float gyro[3];
+static float pitch_angle, last_pitch_angle, roll_angle, abs_roll_angle, abs_roll_angle_sin/*, last_gyro_y*/;
+//static float gyro[3];
 static float duty_cycle, abs_duty_cycle;
 static float erpm, abs_erpm, avg_erpm;
 static float motor_current;
@@ -97,7 +97,7 @@ static SwitchState switch_state;
 
 // Rumtime state values
 static BalanceState state;
-static float proportional, integral, derivative, proportional2, integral2, derivative2;
+static float proportional, integral, derivative, /*proportional2, */integral2/*, derivative2*/;
 static float last_proportional, abs_proportional;
 static float pid_value;
 static float setpoint, setpoint_target, setpoint_target_interpolated;
@@ -106,7 +106,7 @@ static float torquetilt_filtered_current, torquetilt_target, torquetilt_interpol
 static Biquad torquetilt_current_biquad;
 static float turntilt_target, turntilt_interpolated;
 static SetpointAdjustmentType setpointAdjustmentType;
-static float yaw_proportional, yaw_integral, yaw_derivative, yaw_last_proportional, yaw_pid_value, yaw_setpoint;
+static float /*yaw_proportional, */yaw_integral, /*yaw_derivative, */yaw_last_proportional, yaw_pid_value, yaw_setpoint;
 static systime_t current_time, last_time, diff_time, loop_overshoot;
 static float filtered_loop_overshoot, loop_overshoot_alpha, filtered_diff_time;
 static systime_t fault_angle_pitch_timer, fault_angle_roll_timer, fault_switch_timer, fault_switch_half_timer, fault_duty_timer;
@@ -591,13 +591,13 @@ static THD_FUNCTION(balance_thread, arg) {
 
 		// Set "last" values to previous loops values
 		last_pitch_angle = pitch_angle;
-		last_gyro_y = gyro[1];
+		//last_gyro_y = gyro[1];
 		// Get the values we want
 		pitch_angle = RAD2DEG_f(imu_get_pitch());
 		roll_angle = RAD2DEG_f(imu_get_roll());
 		abs_roll_angle = fabsf(roll_angle);
 		abs_roll_angle_sin = sinf(DEG2RAD_f(abs_roll_angle));
-		imu_get_gyro(gyro);
+		//imu_get_gyro(gyro);
 		duty_cycle = mc_interface_get_duty_cycle_now();
 		abs_duty_cycle = fabsf(duty_cycle);
 		erpm = mc_interface_get_rpm();
@@ -701,7 +701,7 @@ static THD_FUNCTION(balance_thread, arg) {
 
 				pid_value = (balance_conf.kp * proportional) + (balance_conf.ki * integral) + (balance_conf.kd * derivative);
 
-				if(balance_conf.pid_mode == BALANCE_PID_MODE_ANGLE_RATE_CASCADE){
+				/*if(balance_conf.pid_mode == BALANCE_PID_MODE_ANGLE_RATE_CASCADE){
 					proportional2 = pid_value - gyro[1];
 					integral2 = integral2 + proportional2;
 					derivative2 = last_gyro_y - gyro[1];
@@ -712,7 +712,7 @@ static THD_FUNCTION(balance_thread, arg) {
 					}
 
 					pid_value = (balance_conf.kp2 * proportional2) + (balance_conf.ki2 * integral2) + (balance_conf.kd2 * derivative2);
-				}
+				}*/
 
 				last_proportional = proportional;
 
@@ -726,7 +726,7 @@ static THD_FUNCTION(balance_thread, arg) {
 					}
 				}
 
-				if(balance_conf.multi_esc){
+				/*if(balance_conf.multi_esc){
 					// Calculate setpoint
 					if(abs_duty_cycle < .02){
 						yaw_setpoint = 0;
@@ -749,7 +749,7 @@ static THD_FUNCTION(balance_thread, arg) {
 					}
 
 					yaw_last_proportional = yaw_proportional;
-				}
+				}*/
 
 				// Output to motor
 				set_current(pid_value, yaw_pid_value);
