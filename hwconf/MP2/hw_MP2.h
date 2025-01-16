@@ -34,8 +34,8 @@
 
 
 // Macros
-#define LED_GREEN_GPIO			GPIOC
-#define LED_GREEN_PIN			12
+#define LED_GREEN_GPIO			GPIOA
+#define LED_GREEN_PIN			15
 #define LED_RED_GPIO			GPIOC
 #define LED_RED_PIN				9
 
@@ -156,11 +156,11 @@
 
 // UART Peripheral
 #define HW_UART_DEV				SD3
-#define HW_UART_GPIO_AF			GPIO_AF_USART3
-#define HW_UART_TX_PORT			GPIOC
-#define HW_UART_TX_PIN			10
-#define HW_UART_RX_PORT			GPIOC
-#define HW_UART_RX_PIN			11
+#define HW_UART_GPIO_AF			GPIO_AF_USART2
+#define HW_UART_TX_PORT			GPIOD
+#define HW_UART_TX_PIN			5
+#define HW_UART_RX_PORT			GPIOD
+#define HW_UART_RX_PIN			6
 
 // ICU Peripheral for servo decoding
 #define HW_USE_SERVO_TIM4
