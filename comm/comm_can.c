@@ -1213,6 +1213,14 @@ void comm_can_send_status6(uint8_t id, bool replace) {
 			buffer, send_index, replace, 0);
 }
 
+void comm_can_send_status7(uint8_t id, bool replace) {
+	int32_t send_index = 0;
+	uint8_t buffer[8];
+	buffer_append_int16(buffer, (int16_t)mc_interface_get_speed(), &send_index);
+	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_7 << 8),
+			buffer, send_index, replace, 0);
+}
+
 #if CAN_ENABLE
 static THD_FUNCTION(cancom_read_thread, arg) {
 	(void)arg;
@@ -1440,6 +1448,11 @@ static void send_can_status(uint8_t msgs, uint8_t id) {
 		mc_interface_select_motor_thread(2);
 		comm_can_send_status6(utils_second_motor_id(), false);
 #endif
+	}
+
+	if (1) {
+		mc_interface_select_motor_thread(1);
+		comm_can_send_status7(id, false);
 	}
 }
 
