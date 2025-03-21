@@ -1932,6 +1932,12 @@ static void decode_msg(uint32_t eid, uint8_t *data8, int len, bool is_replaced) 
 					((uint32_t)CAN_PACKET_POLL_ROTOR_POS << 8), (uint8_t*)buffer, 4, true, 0);
 		} break;
 
+		case CAN_PACKET_BALANCING_SET: {
+			if (len == 1) {
+				bool enable = data8[0] != 0;
+			}
+		} break;
+
 		default:
 			break;
 		}
