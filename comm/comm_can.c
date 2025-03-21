@@ -1217,9 +1217,9 @@ void comm_can_send_status6(uint8_t id, bool replace) {
 void comm_can_send_status7(uint8_t id, bool replace) {
 	int32_t send_index = 0;
 	uint8_t buffer[8];
-	buffer_append_int16(buffer, (int16_t)mc_interface_get_speed(), &send_index);
-	buffer_append_int16(buffer, (int16_t)RAD2DEG_f(imu_get_pitch()), &send_index);
-	buffer_append_int16(buffer, (int16_t)RAD2DEG_f(imu_get_roll()), &send_index);
+	buffer_append_int16(buffer, (int16_t)(mc_interface_get_speed() * 1e3), &send_index);
+	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_pitch()) * 1e2), &send_index);
+	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_roll()) * 1e2), &send_index);
 	buffer[send_index++] = 0;
 
 	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_7 << 8),
