@@ -230,8 +230,25 @@ float app_balance_get_motor_current(void) {
 uint16_t app_balance_get_state(void) {
 	return state;
 }
+bool app_balance_get_is_running(void) {
+	switch (state)
+	{
+	case RUNNING:
+	case RUNNING_TILTBACK_DUTY:
+	case RUNNING_TILTBACK_HIGH_VOLTAGE:
+	case RUNNING_TILTBACK_LOW_VOLTAGE:
+		return true;
+	default:
+		return false;
+	}
+}
 uint16_t app_balance_get_switch_state(void) {
 	return switch_state;
+}
+void app_balance_set_switch_state(bool enabled) {
+	if (balance_conf.fault_adc2 == 0) {
+		switch_state = enabled ? ON : OFF;
+	}
 }
 float app_balance_get_adc1(void) {
 	return adc1;
@@ -618,7 +635,7 @@ static THD_FUNCTION(balance_thread, arg) {
 #else
 		adc2 = 0.0;
 #endif
-
+/*
 		// Calculate switch state from ADC values
 		if(balance_conf.fault_adc1 == 0 && balance_conf.fault_adc2 == 0){ // No Switch
 			switch_state = ON;
@@ -646,7 +663,15 @@ static THD_FUNCTION(balance_thread, arg) {
 				switch_state = OFF;
 			}
 		}
-
+*/
+		// Check only if balance_conf.fault_adc2 is not zero. Else switch_state may changed with app_balance_set_switch_state
+		if (balance_conf.fault_adc2 > 0) {
+			if(adc1 > balance_conf.fault_adc1){
+				switch_state = ON;
+			} else {
+				switch_state = OFF;
+			}
+		}
 
 		// Control Loop State Logic
 		switch(state){

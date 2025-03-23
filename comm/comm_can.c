@@ -1220,7 +1220,12 @@ void comm_can_send_status7(uint8_t id, bool replace) {
 	buffer_append_int16(buffer, (int16_t)(mc_interface_get_speed() * 1e3), &send_index);
 	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_pitch()) * 1e2), &send_index);
 	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_roll()) * 1e2), &send_index);
-	buffer[send_index++] = 0;
+
+	uint8_t balancing_status = 0;
+	if (app_balance_get_switch_state() != 0) {
+		balancing_status = app_balance_get_is_running() ? 2 : 1;
+	}
+	buffer[send_index++] = balancing_status;
 
 	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_7 << 8),
 			buffer, send_index, replace, 0);
@@ -1935,6 +1940,7 @@ static void decode_msg(uint32_t eid, uint8_t *data8, int len, bool is_replaced) 
 		case CAN_PACKET_BALANCING_SET: {
 			if (len == 1) {
 				bool enable = data8[0] != 0;
+				app_balance_set_switch_state(enable);
 			}
 		} break;
 
