@@ -82,6 +82,9 @@ void app_set_configuration(app_configuration *conf) {
 
 	imu_init(&conf->imu_conf);
 
+	// Configure balance app before starting it.
+	app_balance_configure(&appconf.app_balance_conf, &appconf.imu_conf);
+
 	if (app_changed) {
 		if (appconf.app_to_use != APP_PPM &&
 				appconf.app_to_use != APP_PPM_UART &&
@@ -120,6 +123,15 @@ void app_set_configuration(app_configuration *conf) {
 
 		case APP_NUNCHUK:
 			app_nunchuk_start();
+			break;
+
+		case APP_BALANCE:
+			app_balance_start();
+			// TODO:L
+			//if(appconf.imu_conf.type == IMU_TYPE_INTERNAL){
+				//hw_stop_i2c();
+				app_uartcomm_start(UART_PORT_COMM_HEADER);
+			//}
 			break;
 
 		case APP_PAS:

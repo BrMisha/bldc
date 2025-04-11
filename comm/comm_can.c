@@ -1218,6 +1218,23 @@ void comm_can_send_status6(uint8_t id, bool replace) {
 			buffer, send_index, replace, 0);
 }
 
+void comm_can_send_status7(uint8_t id, bool replace) {
+	int32_t send_index = 0;
+	uint8_t buffer[8];
+	buffer_append_int16(buffer, (int16_t)(mc_interface_get_speed() * 1e3), &send_index);
+	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_pitch()) * 1e2), &send_index);
+	buffer_append_int16(buffer, (int16_t)(RAD2DEG_f(imu_get_roll()) * 1e2), &send_index);
+
+	uint8_t balancing_status = 0;
+	if (app_balance_get_switch_state() != 0) {
+		balancing_status = app_balance_get_is_running() ? 2 : 1;
+	}
+	buffer[send_index++] = balancing_status;
+
+	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_7 << 8),
+			buffer, send_index, replace, 0);
+}
+
 #if CAN_ENABLE
 static THD_FUNCTION(cancom_read_thread, arg) {
 	(void)arg;
@@ -1445,6 +1462,11 @@ static void send_can_status(uint8_t msgs, uint8_t id) {
 		mc_interface_select_motor_thread(2);
 		comm_can_send_status6(utils_second_motor_id(), false);
 #endif
+	}
+
+	if (1) {
+		mc_interface_select_motor_thread(1);
+		comm_can_send_status7(id, false);
 	}
 }
 
@@ -1947,6 +1969,13 @@ static void decode_msg(uint32_t eid, uint8_t *data8, int len, bool is_replaced) 
 			buffer_append_int32(buffer, (int32_t)(encoder_read_deg() * 100000.0), &index);
 			comm_can_transmit_eid_replace(app_get_configuration()->controller_id |
 					((uint32_t)CAN_PACKET_POLL_ROTOR_POS << 8), (uint8_t*)buffer, 4, true, 0);
+		} break;
+
+		case CAN_PACKET_BALANCING_SET: {
+			if (len == 1) {
+				bool enable = data8[0] != 0;
+				app_balance_set_switch_state(enable);
+			}
 		} break;
 
 		default:
