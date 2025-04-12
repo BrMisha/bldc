@@ -47,6 +47,7 @@
 #ifdef USE_LISPBM
 #include "lispif.h"
 #endif
+#include "imu/imu.h"
 
 // Settings
 #define RX_FRAMES_SIZE	50
