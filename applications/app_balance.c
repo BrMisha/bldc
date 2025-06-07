@@ -248,7 +248,7 @@ uint16_t app_balance_get_switch_state(void) {
 void app_balance_set_switch_state(bool enabled) {
 	if (balance_conf.fault_adc2 == 0) {
 		float rpm = mc_interface_get_rpm();
-		if (enabled == false && (rpm < 100 || rpm > 100)) return;
+		if (enabled == false && (rpm < -100 || rpm > 100)) return;
 		switch_state = enabled ? ON : OFF;
 	}
 }
