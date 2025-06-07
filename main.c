@@ -302,6 +302,8 @@ int main(void) {
 	app_uartcomm_start(UART_PORT_EXTRA_HEADER);
 	app_set_configuration(appconf);
 
+	app_light_start();
+
 	// This reads the appconf, that must be initialized first.
 #if CAN_ENABLE
 	comm_can_init();
