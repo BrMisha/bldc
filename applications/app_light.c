@@ -139,7 +139,7 @@ static THD_FUNCTION(light_thread, arg) {
 			return;
 		}
 
-		timeout_reset(); // Reset timeout if everything is OK.
+		//timeout_reset(); // Reset timeout if everything is OK.
 
 		switch (light_turn_state)
         {
@@ -170,22 +170,32 @@ static THD_FUNCTION(light_thread, arg) {
             
         }
 
-		chThdSleepMilliseconds(500);
+        chThdSleepMilliseconds(500);
 	}
 }
 
 // Callback function for the terminal command with arguments.
 static void terminal_test(int argc, const char **argv) {
-	if (argc == 2) {
-		int d = -1;
-		sscanf(argv[1], "%d", &d);
+	if (argc == 3) {
+		int state = -1;
+		sscanf(argv[2], "%d", &state);
 
-		commands_printf("You have entered %d", d);
+        if (*argv[1] == 'l') {
+            app_light_set(state);
+            commands_printf("Light set to %d\n", state);
+        }
+        else if (*argv[1] == 't') {
+            app_light_turn_set(state);
+            commands_printf("Turn set to %d\n", state);
+        }
+        else commands_printf("You have passed wrong parameter");
+	} 
 
-		// For example, read the ADC inputs on the COMM header.
-		commands_printf("ADC1: %.2f V ADC2: %.2f V",
-				(double)ADC_VOLTS(ADC_IND_EXT), (double)ADC_VOLTS(ADC_IND_EXT2));
-	} else {
-		commands_printf("This command requires one argument.\n");
-	}
+	commands_printf(
+        "Light: %d\n"
+        "Turns: %d\n",
+        app_light_get(),
+        app_light_turn_get()
+    );
+	
 }

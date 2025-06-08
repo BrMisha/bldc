@@ -110,7 +110,7 @@ void app_light_start(void);
 void app_light_stop(void);
 void app_light_configure(app_configuration *conf);
 void app_light_set(int state);
-int app_light_turn_get(void);
+int app_light_get(void);
 void app_light_turn_set(int state);
 int app_light_turn_get(void);
 

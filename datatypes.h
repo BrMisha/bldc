@@ -1249,6 +1249,8 @@ typedef enum {
 	CAN_PACKET_STATUS_7 			        = 63,
 	CAN_PACKET_BALANCING_SET		        = 64,
 	CAN_PACKET_RESET				        = 65,
+	CAN_PACKET_STATUS_8				        = 66,
+	CAN_PACKET_LIGHT_SET				    = 67,
 	CAN_PACKET_MAKE_ENUM_32_BITS = 0xFFFFFFFF,
 } CAN_PACKET_ID;
 

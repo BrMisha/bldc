@@ -1236,6 +1236,22 @@ void comm_can_send_status7(uint8_t id, bool replace) {
 			buffer, send_index, replace, 0);
 }
 
+void comm_can_send_status8(uint8_t id, bool replace) {
+	int32_t send_index = 0;
+	uint8_t buffer[8];
+
+	buffer[0] = app_light_get();
+
+	buffer[1] = app_light_turn_get();
+	if (TURN_LEFT_READ()) buffer[1] |= 0b10000000;
+	if (TURN_RIGHT_READ()) buffer[1] |= 0b01000000;
+
+	send_index = 2;
+
+	comm_can_transmit_eid_replace(id | ((uint32_t)CAN_PACKET_STATUS_8 << 8),
+			buffer, send_index, replace, 0);
+}
+
 #if CAN_ENABLE
 static THD_FUNCTION(cancom_read_thread, arg) {
 	(void)arg;
@@ -1468,6 +1484,7 @@ static void send_can_status(uint8_t msgs, uint8_t id) {
 	if (1) {
 		mc_interface_select_motor_thread(1);
 		comm_can_send_status7(id, false);
+		comm_can_send_status8(id, false);
 	}
 }
 
@@ -1989,6 +2006,16 @@ static void decode_msg(uint32_t eid, uint8_t *data8, int len, bool is_replaced) 
 					mc_interface_get_watt_hours(true);
 					mc_interface_get_watt_hours_charged(true);
 				} 
+			}
+		} break;
+
+		case CAN_PACKET_LIGHT_SET: {
+			if (len == 2) {
+				uint8_t light = data8[0];
+				uint8_t turn = data8[1];
+
+				if (light & 0b10000000) app_light_set(light & 0b01111111);
+				if (turn & 0b10000000) app_light_turn_set(turn & 0b01111111);
 			}
 		} break;
 
