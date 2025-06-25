@@ -184,32 +184,32 @@
 #define HW_ICU_PIN				6
 
 // Light
-#define LIGHT_GPIO		GPIOB
-#define LIGHT_PIN		7
-#define LIGHT_ON()		palSetPad(LIGHT_GPIO, LIGHT_PIN)
-#define LIGHT_OFF()		palClearPad(LIGHT_GPIO, LIGHT_PIN)
-#define LIGHT_READ()	palReadPad(LIGHT_GPIO, LIGHT_PIN)
+#define LIGHT_GPIO		GPIOC
+#define LIGHT_PIN		10
+#define LIGHT_ON()		palClearPad(LIGHT_GPIO, LIGHT_PIN)  // Drive low for open-drain
+#define LIGHT_OFF()		palSetPad(LIGHT_GPIO, LIGHT_PIN)    // Release high
+#define LIGHT_READ()	(!palReadPad(LIGHT_GPIO, LIGHT_PIN)) // Invert: low=ON, high=OFF
 
 // Light long
 #define LIGHT_LONG_GPIO		GPIOC
-#define LIGHT_LONG_PIN		12
-#define LIGHT_LONG_ON()		palSetPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)
-#define LIGHT_LONG_OFF()	palClearPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)
-#define LIGHT_LONG_READ()	palReadPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)
+#define LIGHT_LONG_PIN		11
+#define LIGHT_LONG_ON()		palClearPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)  // Drive low
+#define LIGHT_LONG_OFF()	palSetPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)    // Release high
+#define LIGHT_LONG_READ()	(!palReadPad(LIGHT_LONG_GPIO, LIGHT_LONG_PIN)) // Invert
 
 // Turn left
 #define TURN_LEFT_GPIO		GPIOC
-#define TURN_LEFT_PIN		11
-#define TURN_LEFT_ON()		palSetPad(TURN_LEFT_GPIO, TURN_LEFT_PIN)
-#define TURN_LEFT_OFF()		palClearPad(TURN_LEFT_GPIO, TURN_LEFT_PIN)
-#define TURN_LEFT_READ()	palReadPad(TURN_LEFT_GPIO, TURN_LEFT_PIN)
+#define TURN_LEFT_PIN		12
+#define TURN_LEFT_ON()		palClearPad(TURN_LEFT_GPIO, TURN_LEFT_PIN)   // Drive low
+#define TURN_LEFT_OFF()		palSetPad(TURN_LEFT_GPIO, TURN_LEFT_PIN)     // Release high
+#define TURN_LEFT_READ()	(!palReadPad(TURN_LEFT_GPIO, TURN_LEFT_PIN))  // Invert
 
 // Turn Right
-#define TURN_RIGHT_GPIO		GPIOC
-#define TURN_RIGHT_PIN		10
-#define TURN_RIGHT_ON()		palSetPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)
-#define TURN_RIGHT_OFF()	palClearPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)
-#define TURN_RIGHT_READ()	palReadPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)
+#define TURN_RIGHT_GPIO		GPIOB
+#define TURN_RIGHT_PIN		7
+#define TURN_RIGHT_ON()		palClearPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)  // Drive low
+#define TURN_RIGHT_OFF()	palSetPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)    // Release high
+#define TURN_RIGHT_READ()	(!palReadPad(TURN_RIGHT_GPIO, TURN_RIGHT_PIN)) // Invert
 
 // I2C Peripheral
 #define HW_I2C_DEV				I2CD2
